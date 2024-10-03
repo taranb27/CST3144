@@ -15,7 +15,7 @@ const server = "cluster0.2ior5mc.mongodb.net";
 const encodedusername = encodeURIComponent(username);
 const encodedpwd = encodeURIComponent(pwd);
 
-const URI = `mongodb+srv://${encodedusername}:${encodedpwd}@${server}/?retryWrites=true&w=majority&appName=Cluster0`;
+const URI = `mongodb+srv://${encodedusername}:${encodedpwd}@${server}/`;
 
 const client = new MongoClient(URI, {
     serverApi: {
