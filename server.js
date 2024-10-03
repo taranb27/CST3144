@@ -15,7 +15,7 @@ const server = "cluster0.2ior5mc.mongodb.net";
 const encodedusername = encodeURIComponent(username);
 const encodedpwd = encodeURIComponent(pwd);
 
-const URI = `mongodb+srv://${encodedusername}:${encodedpwd}@${server}/`;
+const URI = `mongodb+srv://${encodedusername}:${encodedpwd}@${server}/?retryWrites=true&w=majority`;
 
 const client = new MongoClient(URI, {
     serverApi: {
@@ -28,6 +28,8 @@ const client = new MongoClient(URI, {
 client.connect()
     .then(() => {
         console.log("connected to db");
+        const database = client.db("CST3144");
+        const collection = database.collection("course_details");
 
         app.use(express.static(path.join(__dirname)));
 
