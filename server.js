@@ -2,18 +2,45 @@ const express = require("express")
 const session = require("express-session")
 const path = require("path")
 const bodyParser = require("body-parser")
-
+const {MongoClient, ServerApiVersion} = require("mongodb");
 const app = express()
 app.use(bodyParser.json())
 
 const PORT = process.env.PORT || 8080;
 
-app.use(express.static(path.join(__dirname)));
+const pwd = "Taran2706?";
+const username = "tb848";
+const server = "cluster0.2ior5mc.mongodb.net";
 
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+const encodedusername = encodeURIComponent(username);
+const encodedpwd = encodeURIComponent(pwd);
+
+const URI = `mongodb+srv://${encodedusername}:${encodedpwd}@${server}/?retryWrites=true&w=majority&appName=Cluster0`;
+
+const client = new MongoClient(URI, {
+    serverApi: {
+        version: ServerApiVersion.v1,
+        strict: false,
+        deprecationErrors: true,
+    }
 });
 
-app.use(express.json());
+client.connect()
+    .then(() => {
+        console.log("connected to db");
 
-app.listen(PORT, () => console.log('server running'));
+        app.use(express.static(path.join(__dirname)));
+
+        app.get('/', (req, res) => {
+            res.sendFile(path.join(__dirname, 'index.html'));
+        });
+        
+        app.use(express.json());
+
+        app.listen(PORT, () => console.log('server running'));
+    })
+    .catch(err => console.error("error connecting to db", err));
+
+
+
+
