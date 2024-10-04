@@ -11,7 +11,7 @@ const PORT = process.env.PORT || 8080;
 const server = "cluster0.2ior5mc.mongodb.net";
 
 const encodedusername = encodeURIComponent("tb848");
-const encodedpwd = encodeURIComponent("CST31442024");
+const encodedpwd = encodeURIComponent("tb848");
 
 const URI = `mongodb+srv://${encodedusername}:${encodedpwd}@${server}/?retryWrites=true&w=majority&appName=Cluster0;`;
 
