@@ -41,7 +41,7 @@ client.connect()
             ];
 
             for (let course of courseDetails) {
-                const existingCourse = await collection.fineone({
+                const existingCourse = await collection.findOne({
                     Subject: course.Subject,
                     Location: course.Location,
                     Price: course.Price
@@ -57,7 +57,7 @@ client.connect()
         }
 
         courses_details();
-        
+
         app.use(express.static(path.join(__dirname)));
 
         app.get('/', (req, res) => {
