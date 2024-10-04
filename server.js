@@ -68,7 +68,7 @@ client.connect()
         // Sends the course details from MongoDB to the frontend
         app.get('/courses', async (req, res) => {
             try {
-                const courses = await collection.find({}).toArray();
+                const courses = await collection.find().toArray();
                 res.json(courses);
             } catch (err) {
                 console.error("Failed", err);
