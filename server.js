@@ -8,12 +8,10 @@ app.use(bodyParser.json())
 
 const PORT = process.env.PORT || 8080;
 
-const pwd = "taran2706?";
-const username = "tb848";
 const server = "cluster0.2ior5mc.mongodb.net";
 
-const encodedusername = encodeURIComponent(username);
-const encodedpwd = encodeURIComponent(pwd);
+const encodedusername = encodeURIComponent(tb848);
+const encodedpwd = encodeURIComponent(CST31442024);
 
 const URI = `mongodb+srv://${encodedusername}:${encodedpwd}@${server}/?retryWrites=true&w=majority`;
 
