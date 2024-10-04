@@ -54,7 +54,7 @@ client.connect()
                     console.log("courses already exists");
                 }
             }
-            client.close();
+            await client.close();
         }
 
         courses_details();
@@ -69,19 +69,25 @@ client.connect()
         app.get('/courses', async (req, res) => {
             try {
                 const courses = await collection.find({}).toArray();
-                res.json(courses);
+                console.log(courses)
+                res.send(JSON.stringify(courses));
+                // res.status(200).json(courses);
+                await client.close();
             } catch (err) {
                 console.error("Failed", err);
                 res.status(500).send("Error fetching courses");
             }
         });
+
+        // async function find() {
+        //     const courses = await collection.find({}).toArray();
+        //     console.log(courses);
+        //     await client.close();
+        // }
+        // find();
         
         app.use(express.json());
 
         app.listen(PORT, () => console.log('server running'));
     })
     .catch(err => console.error("error connecting to db", err));
-
-
-
-

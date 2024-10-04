@@ -33,7 +33,7 @@
         let app = new Vue({
             el: '#app',
             data:{
-                message: "",
+                message: "After School Classes",
                 courses: [],
             },
             created() {
@@ -41,7 +41,7 @@
             },
             methods: {
                 async display_courses(){
-                    const res = await fetch("/courses");
+                    const res = await fetch("http://localhost:8080/courses");
                     this.courses = await response.json();
                 }
             },
