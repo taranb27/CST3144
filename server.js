@@ -56,6 +56,8 @@ client.connect()
             await client.close();
         }
 
+        courses_details();
+        
         app.use(express.static(path.join(__dirname)));
 
         app.get('/', (req, res) => {
