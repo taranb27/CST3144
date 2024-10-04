@@ -71,7 +71,7 @@ client.connect()
                 const courses = await collection.find({}).toArray();
                 res.json(courses);
             } catch (err) {
-                console.log("Failed");
+                console.error("Failed", err);
                 res.status(500).send("Error fetching courses");
             }
         });
