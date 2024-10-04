@@ -8,7 +8,7 @@ app.use(bodyParser.json())
 
 const PORT = process.env.PORT || 8080;
 
-const pwd = "Taran2706?";
+const pwd = "taran2706?";
 const username = "tb848";
 const server = "cluster0.2ior5mc.mongodb.net";
 
