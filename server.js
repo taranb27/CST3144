@@ -5,14 +5,11 @@ const bodyParser = require("body-parser")
 const {MongoClient, ServerApiVersion} = require("mongodb");
 const app = express()
 app.use(bodyParser.json())
-
 const PORT = process.env.PORT || 8080;
 
 const server = "cluster0.2ior5mc.mongodb.net";
-
 const encodedusername = encodeURIComponent("tb848");
 const encodedpwd = encodeURIComponent("CST3144");
-
 const URI = `mongodb+srv://${encodedusername}:${encodedpwd}@${server}/?retryWrites=true&w=majority&appName=Cluster0;`;
 
 const client = new MongoClient(URI, {
@@ -23,8 +20,10 @@ const client = new MongoClient(URI, {
     }
 });
 
-client.connect()
-    .then(() => {
+
+async function server() {
+    try {
+        await client.connect()
         console.log("connected to db");
         const database = client.db("CST3144");
         const collection = database.collection("course_details");
@@ -57,7 +56,7 @@ client.connect()
             await client.close();
         }
 
-        courses_details();
+        await courses_details();
 
         app.use(express.static(path.join(__dirname)));
 
@@ -79,9 +78,9 @@ client.connect()
         app.use(express.json());
 
         app.listen(PORT, () => console.log('server running'));
-    })
-    .catch(err => console.error("error connecting to db", err));
+    } catch (err) {
+        console.error("error connecting to db", err);
+    }
+}
 
-
-
-
+server();
