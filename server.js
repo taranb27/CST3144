@@ -29,6 +29,7 @@ client.connect()
         const database = client.db("CST3144");
         const collection = database.collection("course_details");
 
+        // The function added courses to the database, if the courses exists, nothing is added
         async function courses_details(){
             const courseDetails = [
                 {Subject: "Maths", Location: "London", Price: "£100"},
@@ -62,6 +63,17 @@ client.connect()
 
         app.get('/', (req, res) => {
             res.sendFile(path.join(__dirname, 'index.html'));
+        });
+
+        // Sends the course details from MongoDB to the frontend
+        app.get('/courses', async (req, res) => {
+            try {
+                const courses = await collection.find({}).toArray();
+                res.json(courses);
+            } catch (err) {
+                console.log("Failed");
+                res.status(500).send("Error fetching courses");
+            }
         });
         
         app.use(express.json());

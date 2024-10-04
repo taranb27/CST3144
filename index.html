@@ -19,11 +19,10 @@
             <figure>
                 <img class="card-img-top" alt="Card image cap">
             </figure>
-            <div class="card-body">
-                <p class="card-text">Subject:</p>
-                <p class="card-text">Location:</p>
-                <p class="card-text">Price:</p>
-                <p class="card-text">Subject:</p>
+            <div class="card-body" v-for="(course, index) in courses">
+                <p class="card-text">Subject: {{course.Subject}}</p>
+                <p class="card-text">Location: {{course.Location}}</p>
+                <p class="card-text">Price: {{course.Price}}</p>
                 <button></button>
             </div>
         </div>
@@ -33,16 +32,19 @@
     <script>
         let app = new Vue({
             el: '#app',
-            data(){
-                return {
-                    message: "After School Class App",
-                    details:[
-                        Subject = "",
-                        Location = "",
-                        Price = "",
-                    ],
+            data:{
+                message: "",
+                courses: [],
+            },
+            created() {
+                this.display_courses();
+            },
+            methods: {
+                async display_courses(){
+                    const res = await fetch("/courses");
+                    this.courses = await response.json();
                 }
-            }
+            },
         })
     </script>
 </body>
