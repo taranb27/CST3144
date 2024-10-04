@@ -13,7 +13,7 @@ const server = "cluster0.2ior5mc.mongodb.net";
 const encodedusername = encodeURIComponent("tb848");
 const encodedpwd = encodeURIComponent("CST31442024");
 
-const URI = `mongodb+srv://${encodedusername}:${encodedpwd}@${server}/?retryWrites=true&w=majority`;
+const URI = `mongodb+srv://${encodedusername}:${encodedpwd}@${server}/?retryWrites=true&w=majority&appName=Cluster0;`;
 
 const client = new MongoClient(URI, {
     serverApi: {
