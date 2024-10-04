@@ -5,11 +5,14 @@ const bodyParser = require("body-parser")
 const {MongoClient, ServerApiVersion} = require("mongodb");
 const app = express()
 app.use(bodyParser.json())
+
 const PORT = process.env.PORT || 8080;
 
 const server = "cluster0.2ior5mc.mongodb.net";
+
 const encodedusername = encodeURIComponent("tb848");
 const encodedpwd = encodeURIComponent("CST3144");
+
 const URI = `mongodb+srv://${encodedusername}:${encodedpwd}@${server}/?retryWrites=true&w=majority&appName=Cluster0;`;
 
 const client = new MongoClient(URI, {
@@ -20,10 +23,8 @@ const client = new MongoClient(URI, {
     }
 });
 
-
-async function serverSide() {
-    try {
-        await client.connect()
+client.connect()
+    .then(() => {
         console.log("connected to db");
         const database = client.db("CST3144");
         const collection = database.collection("course_details");
@@ -53,10 +54,10 @@ async function serverSide() {
                     console.log("courses already exists");
                 }
             }
-            await client.close();
+            client.close();
         }
 
-        await courses_details();
+        courses_details();
 
         app.use(express.static(path.join(__dirname)));
 
@@ -67,7 +68,7 @@ async function serverSide() {
         // Sends the course details from MongoDB to the frontend
         app.get('/courses', async (req, res) => {
             try {
-                const courses = await collection.find().toArray();
+                const courses = await collection.find({}).toArray();
                 res.json(courses);
             } catch (err) {
                 console.error("Failed", err);
@@ -78,9 +79,9 @@ async function serverSide() {
         app.use(express.json());
 
         app.listen(PORT, () => console.log('server running'));
-    } catch (err) {
-        console.error("error connecting to db", err);
-    }
-}
+    })
+    .catch(err => console.error("error connecting to db", err));
 
-serverSide();
+
+
+
