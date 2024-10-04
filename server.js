@@ -21,7 +21,7 @@ const client = new MongoClient(URI, {
 });
 
 
-async function server() {
+async function serverSide() {
     try {
         await client.connect()
         console.log("connected to db");
@@ -83,4 +83,4 @@ async function server() {
     }
 }
 
-server();
+serverSide();
