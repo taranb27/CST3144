@@ -29,19 +29,21 @@ client.connect()
         const database = client.db("CST3144");
         const collection = database.collection("course_details");
 
+
         // The function added courses to the database, if the courses exists, nothing is added
         async function courses_details(){
+
             const courseDetails = [
-                {Subject: "Maths", Location: "London", Price: "£100"},
-                {Subject: "English", Location: "Bristol", Price: "£80"},
-                {Subject: "French", Location: "York", Price: "£90"},
-                {Subject: "Science", Location: "London", Price: "£120"},
-                {Subject: "Maths", Location: "York", Price: "£100"},
-                {Subject: "Music", Location: "Bristol", Price: "£80"},
-                {Subject: "English", Location: "London", Price: "£80"},
-                {Subject: "Maths", Location: "York", Price: "£1020"},
-                {Subject: "Science", Location: "Liverpool", Price: "£85"},
-                {Subject: "Frech", Location: "Manchester", Price: "£86"}
+                {Subject: "Maths", Location: "London", Price: "£100", Spaces: 10},
+                {Subject: "English", Location: "Bristol", Price: "£80", Spaces: 10},
+                {Subject: "French", Location: "York", Price: "£90", Spaces: 10},
+                {Subject: "Science", Location: "London", Price: "£120", Spaces: 10},
+                {Subject: "Maths", Location: "York", Price: "£100", Spaces: 10},
+                {Subject: "Music", Location: "Bristol", Price: "£80", Spaces: 10},
+                {Subject: "English", Location: "London", Price: "£80", Spaces: 10},
+                {Subject: "Maths", Location: "York", Price: "£1020", Spaces: 10},
+                {Subject: "Science", Location: "Liverpool", Price: "£85", Spaces: 10},
+                {Subject: "Frech", Location: "Manchester", Price: "£86", Spaces: 10}
             ];
 
             for (let course of courseDetails) {
