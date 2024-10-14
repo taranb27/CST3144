@@ -16,37 +16,47 @@
 </head>
 <body>
     <div id="app">
-        <h1 style="font-size: 28px; text-align: center; padding: 2%;">{{title1}}</h1>
-        <!-- Checkout Button -->
-        <button v-on:click="showCart" class="btn btn-info" style="margin-left: 10px; margin-bottom: 20px;">
-            {{countItemInCart}}
-            <span class="fa fa-cart-plus"></span>
-            Cart
-        </button>
+        <h1 style="font-size: 28px; text-align: center; padding-top: 2%;">{{title1}}</h1>
 
-        <div>
-            <!-- Dropdown to select attribute to sort by -->
-            <label for="sort-attribute">Sort by:</label>
-            <select v-model="sortAttribute" id="sort-attribute">
-                <option value="Subject">Subject</option>
-                <option value="Location">Location</option>
-                <option value="Price">Price</option>
-                <option value="Spaces">Spaces</option>
-            </select>
-        
-            <!-- Dropdown to select ascending or descending order -->
-            <label for="sort-order">Order:</label>
-            <select v-model="sortOrder" id="sort-order">
-                <option value="asc">Ascending</option>
-                <option value="desc">Descending</option>
-            </select>
+        <!-- Checkout Button -->
+        <div v-if="cart.length > 0" class="d-flex justify-content-end" style="padding-right: 10%;">
+            <button v-on:click="showCart" class="btn btn-info" style="margin-bottom: 20px;">
+                {{countItemInCart}}
+                <span class="fa fa-cart-plus"></span>
+                Cart
+            </button>
         </div>
+
 
         <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
             <main>
                 <div v-if="showSubject">
 
-                    <div style="display: flex; flex-wrap: wrap;">
+                    <div class="container mt-5">
+                        <div class="d-flex justify-content-center mb-3">
+                            <div class="me-3">
+                                <!-- Dropdown to select attribute to sort by -->
+                                <label for="sort-attribute" class="form-label">Sort by:</label>
+                                <select v-model="sortAttribute" id="sort-attribute" class="form-select">
+                                    <option value="Subject">Subject</option>
+                                    <option value="Location">Location</option>
+                                    <option value="Price">Price</option>
+                                    <option value="Spaces">Spaces</option>
+                                </select>
+                            </div>
+                
+                            <div>
+                                <!-- Dropdown to select ascending or descending order -->
+                                <label for="sort-order" class="form-label">Order:</label>
+                                <select v-model="sortOrder" id="sort-order" class="form-select">
+                                    <option value="asc">Ascending</option>
+                                    <option value="desc">Descending</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; flex-wrap: wrap; padding-left: 10%;">
                         <div v-for="subject in sortedCourses" class="card" style="width: 250px; margin: 10px;">
                             <p class="card-text" style="padding: 0; margin: 0; margin-left: 10px; margin-top: 10px;;">Subject: {{subject.Subject}}</p>
                             <p class="card-text" style="padding: 0; margin: 0; margin-left: 10px;">Location: {{subject.Location}}</p>
@@ -79,10 +89,11 @@
                         <div>        
                             <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
                                 <form style="width: 500px;">
-                                    <p><input v-model.trim="checkout.firstName" class="form-control" placeholder="First Name"></p>
-                                    <p><input v-model.trim="checkout.lastName" class="form-control" placeholder="Last Name"></p>
+                                    <h1 style="font-size: 28px; text-align: center; padding: 2%;">{{title3}}</h1>
+
+                                    <p><input v-model.trim="checkout.name" class="form-control" placeholder="Name"></p>
                                     <p><input v-model.trim="checkout.number" class="form-control" placeholder="Phone Number"></p>
-                                    <button v-on:click="submitForm" type="button" class="btn btn-success">Checkout</button>
+                                    <button v-if="checkout.name && checkout.number" v-on:click="submitForm" type="button" class="btn btn-success">Checkout</button>
                                 </form>
                             </div>
                         </div>
@@ -103,13 +114,13 @@
             el: '#app',
             data: {
                 title1: "After School Classes",
-                title2: "Welcome to the Checkout page",
+                title2: "Shopping Cart",
+                title3: "Checkout",
                 showSubject: true,
                 courses: [],
                 cart: [],
                 checkout: {
-                    firstName: '',
-                    lastName: '',
+                    name: '',
                     number: ''
                 },
                 sortAttribute: 'Subject',
@@ -160,32 +171,33 @@
                 },
 
                 submitForm() {
-                    if (
-                        this.checkout.firstName &&
-                        this.checkout.lastName &&
-                        this.checkout.number
-                    ){
-                        Swal.fire({
-                            title: "Success",
-                            text: "Checkout Completed",
-                            icon: "success"
-                        });
-                    } else if (
-                        this.cart.length === 0
-                    ){
-                        Swal.fire({
-                            title: "Error",
-                            text: "Cart is empty, please select a course",
-                            icon: "error"
-                        });
-                    } else {
-                        Swal.fire({
-                            title: "Error",
-                            text: "Checkout form incomplete",
-                            icon: "error"
-                        });
+                    if (this.checkout.name && this.checkout.number) {
+                        const orderData = {Name: this.checkout.name, Phone_Number: this.checkout.number, Course_Id: this.cart}
+
+                        fetch('http://localhost:8080/orders', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(orderData)
+                        })
+                        .then(response => response.json())
+                        .then(() => {
+                            this.checkout = {
+                                name: '', number: ''
+                            }
+                            this.cart = []
+                            Swal.fire({
+                                title: 'Success',
+                                text: 'Order has been submitted',
+                                icon: 'success'
+                            }).then(() => {
+                                this.showSubject = true;
+                            })
+                        })
                     }
                 }
+
             },
             created() {
                 this.fetchCourses();  

@@ -90,6 +90,22 @@ client.connect()
             }
         });
 
+        app.post('/orders', async(req, res) => {
+            const orderData =req.body;
+            try {
+                await client.connect();
+                const db2 = client.db("CST3144");
+                const collection2  = db2.collection('orders');
+                const result = await collection2.insertOne(orderData);
+                res.status(201).send({insertedId: result.insertedId});
+            } catch (error) {
+                console.error('error saving order:', error);
+                res.status(500).send('error placing order');
+            } finally {
+                await client.close();
+            }
+        });
+
         // async function find() {
         //     const courses = await collection.find({}).toArray();
         //     console.log(courses);
