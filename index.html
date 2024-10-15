@@ -171,30 +171,30 @@
                 },
 
                 submitForm() {
-                    if (
-                        this.checkout.firstName &&
-                        this.checkout.lastName &&
-                        this.checkout.number
-                    ){
-                        Swal.fire({
-                            title: "Success",
-                            text: "Checkout Completed",
-                            icon: "success"
-                        });
-                    } else if (
-                        this.cart.length === 0
-                    ){
-                        Swal.fire({
-                            title: "Error",
-                            text: "Cart is empty, please select a course",
-                            icon: "error"
-                        });
-                    } else {
-                        Swal.fire({
-                            title: "Error",
-                            text: "Checkout form incomplete",
-                            icon: "error"
-                        });
+                    if (this.checkout.name && this.checkout.number) {
+                        const orderData = {Name: this.checkout.name, Phone_Number: this.checkout.number, Course_Id: this.cart}
+
+                        fetch('http://localhost:8080/orders', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(orderData)
+                        })
+                        .then(response => response.json())
+                        .then(() => {
+                            this.checkout = {
+                                name: '', number: ''
+                            }
+                            this.cart = []
+                            Swal.fire({
+                                title: 'Success',
+                                text: 'Order has been submitted',
+                                icon: 'success'
+                            }).then(() => {
+                                this.showSubject = true;
+                            })
+                        })
                     }
                 }
 
