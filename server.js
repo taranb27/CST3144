@@ -76,9 +76,9 @@ client.connect()
                 // console.log("working")
                 await client.connect();
                 const db1 = client.db("CST3144");
-                const collection1 = db1.collection("course_details");
+                const coursesCollection = db1.collection("course_details");
 
-                const courses = await collection1.find().toArray();
+                const courses = await coursesCollection.find().toArray();
                 // console.log(courses)
                 res.json(courses)
                 await client.close();
@@ -89,6 +89,7 @@ client.connect()
                 await client.close();
             }
         });
+
 
         app.post('/orders', async(req, res) => {
             const orderData =req.body;
@@ -106,13 +107,9 @@ client.connect()
             }
         });
 
-        // async function find() {
-        //     const courses = await collection.find({}).toArray();
-        //     console.log(courses);
-        //     await client.close();
-        // }
-        // find();
         
+            
+            
         app.use(express.json());
 
         app.listen(PORT, () => console.log('server running'));
