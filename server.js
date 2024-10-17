@@ -32,6 +32,7 @@ client.connect()
 
         // The function added courses to the database, if the courses exists, nothing is added
         async function courses_details(){
+            const result = await collection.drop();
 
             const courseDetails = [
                 {Subject: "Maths", Location: "London", Price: "£100", Spaces: 10},
@@ -43,7 +44,7 @@ client.connect()
                 {Subject: "English", Location: "London", Price: "£80", Spaces: 10},
                 {Subject: "Maths", Location: "York", Price: "£1020", Spaces: 10},
                 {Subject: "Science", Location: "Liverpool", Price: "£85", Spaces: 10},
-                {Subject: "Frech", Location: "Manchester", Price: "£86", Spaces: 10}
+                {Subject: "French", Location: "Manchester", Price: "£86", Spaces: 10}
             ];
 
             for (let course of courseDetails) {
@@ -70,26 +71,26 @@ client.connect()
             res.sendFile(path.join(__dirname, 'index.html'));
         });
 
-        // Sends the course details from MongoDB to the frontend
-        app.get('/courses', async (req, res) => {
-            try {
-                // console.log("working")
-                await client.connect();
-                const db1 = client.db("CST3144");
-                const coursesCollection = db1.collection("course_details");
-
-                const courses = await coursesCollection.find().toArray();
-                // console.log(courses)
-                res.json(courses)
-                await client.close();
-            } catch (err) {
-                console.error("Failed", err);
-                res.status(500).send("Error fetching courses");
-            } finally {
-                await client.close();
-            }
-        });
-
+                // Sends the course details from MongoDB to the frontend
+                app.get('/courses', async (req, res) => {
+                    try {
+                        // console.log("working")
+                        await client.connect();
+                        const db1 = client.db("CST3144");
+                        const coursesCollection = db1.collection("course_details");
+        
+                        const courses = await coursesCollection.find().toArray();
+                        // console.log(courses)
+                        res.json(courses)
+                        await client.close();
+                    } catch (err) {
+                        console.error("Failed", err);
+                        res.status(500).send("Error fetching courses");
+                    } finally {
+                        await client.close();
+                    }
+                });
+        
 
         app.post('/orders', async(req, res) => {
             const orderData =req.body;
@@ -107,8 +108,6 @@ client.connect()
             }
         });
 
-        
-            
             
         app.use(express.json());
 
