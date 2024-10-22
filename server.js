@@ -2,7 +2,7 @@ const express = require("express")
 const session = require("express-session")
 const path = require("path")
 const bodyParser = require("body-parser")
-const {MongoClient, ServerApiVersion} = require("mongodb");
+const {MongoClient, ServerApiVersion, ObjectId} = require("mongodb");
 const app = express()
 app.use(bodyParser.json())
 
@@ -32,7 +32,8 @@ client.connect()
 
         // The function added courses to the database, if the courses exists, nothing is added
         async function courses_details(){
-            const result = await collection.drop();
+
+            // const result = await collection.drop()
 
             const courseDetails = [
                 {Subject: "Maths", Location: "London", Price: "£100", Spaces: 10},
@@ -107,6 +108,40 @@ client.connect()
                 await client.close();
             }
         });
+
+        app.put('/courses/:id/spaces', async (req, res) => {
+            const courseId = req.params.id;
+            const {spacesToReduce} = req.body;
+            console.log(`Updating spaces for course ID: ${courseId}, Spaces to reduce: ${spacesToReduce}`);
+
+                if (typeof spacesToReduce !== 'number' || spacesToReduce <= 0) {
+                    return res.status(400).send('Invalid spaces to reduce');
+                }
+
+            try {
+                await client.connect();
+                const db = client.db("CST3144");
+                const coursesCollection = db.collection('course_details');
+
+                const result = await coursesCollection.updateOne(
+                    {_id: new ObjectId(courseId)},
+                    {$inc: {Spaces: -spacesToReduce}}
+                );
+
+                console.log(`Update result:`, result);
+
+                const updatedCourse = await coursesCollection.findOne({ _id: new ObjectId(courseId) });
+                console.log(`Updated course details:`, updatedCourse);
+
+                res.status(200).send(updatedCourse);
+         
+            } catch(error) {
+                console.error(`Error updating spaces for course ID: ${courseId}`, error);
+                res.status(500).send('Internal server error');
+        
+            }
+
+        })
 
             
         app.use(express.json());

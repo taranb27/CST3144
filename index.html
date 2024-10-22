@@ -144,7 +144,8 @@
                             id: course._id,
                             subject: course.Subject,
                             location: course.Location,
-                            price: course.Price
+                            price: course.Price,
+                            bookedSpaces: 1
                         })
                         course.Spaces--
                     }
@@ -172,7 +173,11 @@
 
                 submitForm() {
                     if (this.checkout.name && this.checkout.number) {
-                        const orderData = {Name: this.checkout.name, Phone_Number: this.checkout.number, Course_Id: this.cart}
+                        const orderData = {Name: this.checkout.name, Phone_Number: this.checkout.number,
+                            Course_Id: this.cart.map(course => ({
+                                id: course.id, bookedSpaces: course.bookedSpaces
+                            }))
+                        }
 
                         fetch('http://localhost:8080/orders', {
                             method: 'POST',
@@ -183,6 +188,37 @@
                         })
                         .then(response => response.json())
                         .then(() => {
+                            this.cart.forEach(course => {
+                                console.log('Course object:', course); // Check course structure
+                                const courseId = course.id
+                                const bookedSpaces = Number(course.bookedSpaces)
+                                const courseInDb = this.courses.find(item => item._id === courseId)
+                     
+
+                                if(courseInDb && bookedSpaces > 0) {
+                                    console.log(`Sending request to update course: ${courseId}, bookedSpaces: ${bookedSpaces}`);
+                                    fetch(`http://localhost:8080/courses/${courseId}/spaces`, {
+                                        method: 'PUT',
+                                        headers: {
+                                            'Content-Type': 'application/json'
+                                        },
+                                        body: JSON.stringify({ spacesToReduce: bookedSpaces})
+                                    })
+                                    .then(response => {
+                                        if (!response.ok) {
+                                            throw new Error(`HTTP error! status: ${response.status}`);
+                                        }
+                                        return response.json()
+                                    })
+                                    .then(data => { // Here 'data' should be the parsed response
+                                        console.log(`Spaces updated for course: ${course.subject}`, data);
+                                    })
+                                    .catch(error => {
+                                        console.error(`error updating spaces for course: ${course.subject}`, error)
+                                    });
+                                } 
+                            })
+
                             this.checkout = {
                                 name: '', number: ''
                             }
