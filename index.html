@@ -26,10 +26,6 @@
             </button>
         </div>
 
-
-          
-
-
         <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
             <main>
                 <div v-if="showSubject">
@@ -86,6 +82,7 @@
                 <!-- displays the subject cart with its details and the checkout button -->
                     <div style="display: flex; flex-wrap: wrap; padding-left: 10%;">
                         <div v-for="subject in sortedCourses" class="card" style="width: 250px; margin: 10px;">
+                            <img :src="subject.Image" :alt="subject.Subject" style="width: 100%; height: 150px; object-fit: cover;" />
                             <p class="card-text" style="padding: 0; margin: 0; margin-left: 10px; margin-top: 10px;;">Subject: {{subject.Subject}}</p>
                             <p class="card-text" style="padding: 0; margin: 0; margin-left: 10px;">Location: {{subject.Location}}</p>
                             <p class="card-text" style="padding: 0; margin: 0; margin-left: 10px;">Price: {{subject.Price}}</p>
@@ -96,6 +93,7 @@
                             <div v-else>
                                 <button class="btn btn-secondary" disabled>Add to Cart</button>
                                 <span v-if="subject.Spaces === CartCount(subject._id)">Housefull!</span>
+                                <!-- if spaces > 0 'Buy Now!' will be displayed -->
                                 <span v-else>Buy Now!</span>
                             </div>
                         </div>
@@ -313,7 +311,7 @@
                                 })
 
                                 this.checkout = {
-                                    name: '', number: ''
+                                    name: '', number: '', email: '', address: '', city: ''
                                 }
                                 this.cart = []
                                 Swal.fire({
@@ -328,6 +326,8 @@
                     }
                 },
 
+                // search functionality for the frontend
+                // it fetches data from the backend and displays it on the frontend
                 search() {
                     if(this.query.trim().length === 0) {
                         this.search_courses = []
@@ -335,8 +335,8 @@
                     }
 
                     const searchQuery = document.getElementById('searchInput').value;
-
                     this.loading = true;
+
                     fetch(`http://localhost:8080/search?query=${encodeURIComponent(searchQuery)}`)
                         .then((response) => {
                             if(!response.ok) {
@@ -354,8 +354,6 @@
                             this.loading = false;
                         })
                 }
-
-                
 
             },
             created() {

@@ -10,6 +10,8 @@ const PORT = process.env.PORT || 8080;
 
 const server = "cluster0.2ior5mc.mongodb.net";
 
+
+
 const encodedusername = encodeURIComponent("tb848");
 const encodedpwd = encodeURIComponent("CST3144");
 
@@ -26,6 +28,10 @@ const client = new MongoClient(URI, {
 client.connect()
     .then(() => {
         console.log("connected to db");
+
+        app.use(express.static(path.join(__dirname)));
+        app.use('/images', express.static(path.join(__dirname, 'images')))
+
         const database = client.db("CST3144");
         const collection = database.collection("course_details");
 
@@ -36,16 +42,16 @@ client.connect()
             // const result = await collection.drop()
             const result = await collection.drop();
             const courseDetails = [
-                {Subject: "Maths", Location: "London", Price: "£100", Spaces: 10},
-                {Subject: "English", Location: "Bristol", Price: "£80", Spaces: 10},
-                {Subject: "French", Location: "York", Price: "£90", Spaces: 10},
-                {Subject: "Science", Location: "London", Price: "£120", Spaces: 10},
-                {Subject: "Maths", Location: "York", Price: "£100", Spaces: 10},
-                {Subject: "Music", Location: "Bristol", Price: "£80", Spaces: 10},
-                {Subject: "English", Location: "London", Price: "£80", Spaces: 10},
-                {Subject: "Maths", Location: "York", Price: "£1020", Spaces: 10},
-                {Subject: "Science", Location: "Liverpool", Price: "£85", Spaces: 10},
-                {Subject: "French", Location: "Manchester", Price: "£86", Spaces: 10}
+                {Subject: "Maths", Location: "London", Price: "£100", Spaces: 10, Image: "images/maths.jpeg"},
+                {Subject: "English", Location: "Bristol", Price: "£80", Spaces: 10, Image: "images/english.jpg"},
+                {Subject: "French", Location: "York", Price: "£90", Spaces: 10, Image: "images/french.jpg"},
+                {Subject: "Science", Location: "London", Price: "£120", Spaces: 10, Image: "images/science.avif"},
+                {Subject: "Maths", Location: "York", Price: "£100", Spaces: 10, Image: "images/maths.jpeg"},
+                {Subject: "Music", Location: "Bristol", Price: "£80", Spaces: 10, Image: "images/music.jpeg"},
+                {Subject: "English", Location: "London", Price: "£80", Spaces: 10, Image: "images/english.jpg"},
+                {Subject: "Maths", Location: "York", Price: "£1020", Spaces: 10, Image: "images/maths.jpeg"},
+                {Subject: "Science", Location: "Liverpool", Price: "£85", Spaces: 10, Image: "images/science.avif"},
+                {Subject: "French", Location: "Manchester", Price: "£86", Spaces: 10, Image: "images/french.jpg"}
             ];
 
             for (let course of courseDetails) {
@@ -66,8 +72,7 @@ client.connect()
 
         courses_details();
 
-        app.use(express.static(path.join(__dirname)));
-
+        
         app.get('/', (req, res) => {
             res.sendFile(path.join(__dirname, 'index.html'));
         });
