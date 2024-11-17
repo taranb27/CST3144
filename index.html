@@ -189,7 +189,6 @@
                         .then(response => response.json())
                         .then(() => {
                             this.cart.forEach(course => {
-                                console.log('Course object:', course); // Check course structure
                                 const courseId = course.id
                                 const bookedSpaces = Number(course.bookedSpaces)
                                 const courseInDb = this.courses.find(item => item._id === courseId)
@@ -210,12 +209,8 @@
                                         }
                                         return response.json()
                                     })
-                                    .then(data => { // Here 'data' should be the parsed response
-                                        console.log(`Spaces updated for course: ${course.subject}`, data);
-                                    })
-                                    .catch(error => {
-                                        console.error(`error updating spaces for course: ${course.subject}`, error)
-                                    });
+                                    .then(data => {console.log(`Spaces updated for course: ${course.subject}`, data);})
+                                    .catch(error => {console.error(`error updating spaces for course: ${course.subject}`, error)});
                                 } 
                             })
 
