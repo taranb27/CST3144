@@ -36,7 +36,7 @@ client.connect()
             // const result = await collection.drop()
             const result = await collection.drop();
             const courseDetails = [
-                {img: "images/english.jpg" ,Subject: "Maths", Location: "London", Price: "£100", Spaces: 10},
+                {Subject: "Maths", Location: "London", Price: "£100", Spaces: 10},
                 {Subject: "English", Location: "Bristol", Price: "£80", Spaces: 10},
                 {Subject: "French", Location: "York", Price: "£90", Spaces: 10},
                 {Subject: "Science", Location: "London", Price: "£120", Spaces: 10},
@@ -93,6 +93,7 @@ client.connect()
                 });
         
 
+        // POST method for order (after checkout)
         app.post('/orders', async(req, res) => {
             const orderData =req.body;
             try {
@@ -109,6 +110,7 @@ client.connect()
             }
         });
 
+        // PUT method to update spaces for course bought
         app.put('/courses/:id/spaces', async (req, res) => {
             const courseId = req.params.id;
             const {spacesToReduce} = req.body;
@@ -143,6 +145,7 @@ client.connect()
 
         });
 
+        // GET method for search functionality (search as you type)
         app.get('/search', async(req, res) => {
             try {
                 console.log('Query parameter:', req.query.query);
