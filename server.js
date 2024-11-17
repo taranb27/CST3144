@@ -39,8 +39,6 @@ client.connect()
         // The function added courses to the database, if the courses exists, nothing is added
         async function courses_details(){
 
-            // const result = await collection.drop()
-            const result = await collection.drop();
             const courseDetails = [
                 {Subject: "Maths", Location: "London", Price: "£100", Spaces: 10, Image: "images/maths.jpeg"},
                 {Subject: "English", Location: "Bristol", Price: "£80", Spaces: 10, Image: "images/english.jpg"},
