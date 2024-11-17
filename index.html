@@ -18,7 +18,6 @@
     <div id="app">
         <h1 style="font-size: 28px; text-align: center; padding-top: 2%;">{{title1}}</h1>
 
-        <!-- Checkout Button -->
         <div v-if="cart.length > 0" class="d-flex justify-content-end" style="padding-right: 10%;">
             <button v-on:click="showCart" class="btn btn-info" style="margin-bottom: 20px;">
                 {{countItemInCart}}
@@ -28,14 +27,38 @@
         </div>
 
 
+          
+
+
         <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
             <main>
                 <div v-if="showSubject">
 
                     <div class="container mt-5">
+
                         <div class="d-flex justify-content-center mb-3">
+
+                            <div class="me-3" style="margin-top: 32px; width: 500px; position: relative">
+                                <input
+                                  id="searchInput"
+                                  type="text"
+                                  v-model="query"
+                                  placeholder="Search"
+                                  @input="search"
+                                  class="form-control"
+                                />
+                                <div v-if="loading" style="position: absolute; background: white; z-index: 10; width: 100%; border: 1px solid #ddd; padding: 12px; box-shadow: 0px 4px 6px rgba(0,0,0,0.1);">Loading...</div>
+                                <ul id="search_results" style="list-style-type: none; padding: 0; margin: 0; position: absolute; top: 100%; left: 0; background: white; z-index: 10; width: 100%; border: 1px solid #ddd; box-shadow: 0px 4px 6px rgba(0,0,0,0.1);">
+                                  <li v-for="course in search_courses" :key="course._id">
+                                    <a href="#" style="border: 1px solid #ddd; margin-top: -1px; background-color: #f6f6f6; padding: 12px; text-decoration: none; display: block;">
+                                        <strong>Subject: {{ course.Subject }}</strong>, Location: {{ course.Location }}, Price: ${{ course.Price }}, Spaces: {{ course.Spaces }}
+                                    </a>
+                                  </li>
+                                </ul>
+
+                            </div>
+
                             <div class="me-3">
-                                <!-- Dropdown to select attribute to sort by -->
                                 <label for="sort-attribute" class="form-label">Sort by:</label>
                                 <select v-model="sortAttribute" id="sort-attribute" class="form-select">
                                     <option value="Subject">Subject</option>
@@ -46,7 +69,6 @@
                             </div>
                 
                             <div>
-                                <!-- Dropdown to select ascending or descending order -->
                                 <label for="sort-order" class="form-label">Order:</label>
                                 <select v-model="sortOrder" id="sort-order" class="form-select">
                                     <option value="asc">Ascending</option>
@@ -56,6 +78,8 @@
                         </div>
                     </div>
 
+
+
                     <div style="display: flex; flex-wrap: wrap; padding-left: 10%;">
                         <div v-for="subject in sortedCourses" class="card" style="width: 250px; margin: 10px;">
                             <p class="card-text" style="padding: 0; margin: 0; margin-left: 10px; margin-top: 10px;;">Subject: {{subject.Subject}}</p>
@@ -63,7 +87,6 @@
                             <p class="card-text" style="padding: 0; margin: 0; margin-left: 10px;">Price: {{subject.Price}}</p>
                             <p class="card-text" style="margin-left: 10px;">Spaces: {{subject.Spaces}}</p>
 
-                            <!-- Add to Cart Button -->
                             <button class="btn btn-primary" style="margin-bottom: 10px; margin-left: 10px; margin-right: 10px;" v-on:click="addItemToCart(subject)" v-if="CanAddItemToCart(subject)">Add to Cart</button>
                             <div v-else>
                                 <button class="btn btn-secondary" disabled>Add to Cart</button>
@@ -87,12 +110,15 @@
                         </div>
 
                         <div>        
-                            <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                            <div style="display: flex; flex-wrap: wrap ;flex-direction: column; justify-content: center; align-items: center;">
+                                
                                 <form style="width: 500px;">
                                     <h1 style="font-size: 28px; text-align: center; padding: 2%;">{{title3}}</h1>
-
-                                    <p><input v-model.trim="checkout.name" class="form-control" placeholder="Name"></p>
+                                    <p></p><input v-model.trim="checkout.name" class="form-control" placeholder="Name"></p>                                    
                                     <p><input v-model.trim="checkout.number" class="form-control" placeholder="Phone Number"></p>
+                                    <p><input v-model.trim="checkout.email" class="form-control" placeholder="Email Address"></p>
+                                    <p><input v-model.trim="checkout.address" class="form-control" placeholder="Address"></p>
+                                    <p><input v-model.trim="checkout.city" class="form-control" placeholder="City"></p>
                                     <button v-if="checkout.name && checkout.number" v-on:click="submitForm" type="button" class="btn btn-success">Checkout</button>
                                 </form>
                             </div>
@@ -124,7 +150,10 @@
                     number: ''
                 },
                 sortAttribute: 'Subject',
-                sortOrder: 'asc'
+                sortOrder: 'asc',
+                query: '',
+                search_courses: [],
+                loading: false
             },
             methods: {
                 fetchCourses() {
@@ -171,64 +200,147 @@
                     this.showSubject = !this.showSubject;
                 },
 
-                submitForm() {
-                    if (this.checkout.name && this.checkout.number) {
-                        const orderData = {Name: this.checkout.name, Phone_Number: this.checkout.number,
-                            Course_Id: this.cart.map(course => ({
-                                id: course.id, bookedSpaces: course.bookedSpaces
-                            }))
-                        }
+                // form validation using regular expression
+                checkoutValidation(){
+                    const name = /^[a-zA-Z\s]{2,}$/;
+                    const num = /^\d{10,15}$/;
+                    const email = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+                    const address = /^[a-zA-Z0-9\s,.'-]{5,}$/;
+                    const city = /^[a-zA-Z\s]{2,}$/;
 
-                        fetch('http://localhost:8080/orders', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify(orderData)
+                    if(!name.test(this.checkout.name)){
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'Enter a valid name',
+                            icon: 'error'
                         })
-                        .then(response => response.json())
-                        .then(() => {
-                            this.cart.forEach(course => {
-                                const courseId = course.id
-                                const bookedSpaces = Number(course.bookedSpaces)
-                                const courseInDb = this.courses.find(item => item._id === courseId)
-                     
-
-                                if(courseInDb && bookedSpaces > 0) {
-                                    console.log(`Sending request to update course: ${courseId}, bookedSpaces: ${bookedSpaces}`);
-                                    fetch(`http://localhost:8080/courses/${courseId}/spaces`, {
-                                        method: 'PUT',
-                                        headers: {
-                                            'Content-Type': 'application/json'
-                                        },
-                                        body: JSON.stringify({ spacesToReduce: bookedSpaces})
-                                    })
-                                    .then(response => {
-                                        if (!response.ok) {
-                                            throw new Error(`HTTP error! status: ${response.status}`);
-                                        }
-                                        return response.json()
-                                    })
-                                    .then(data => {console.log(`Spaces updated for course: ${course.subject}`, data);})
-                                    .catch(error => {console.error(`error updating spaces for course: ${course.subject}`, error)});
-                                } 
-                            })
-
-                            this.checkout = {
-                                name: '', number: ''
-                            }
-                            this.cart = []
-                            Swal.fire({
-                                title: 'Success',
-                                text: 'Order has been submitted',
-                                icon: 'success'
-                            }).then(() => {
-                                this.showSubject = true;
-                            })
-                        })
+                        return false;
                     }
+                    if(!num.test(this.checkout.number)){
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'Enter a valid phone number',
+                            icon: 'error'
+                        })
+                        return false;
+                    }
+                    if(!email.test(this.checkout.email)){
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'Enter a valid email address',
+                            icon: 'error'
+                        })
+                        return false;
+                    }
+                    if(!address.test(this.checkout.address)){
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'Enter a valid address',
+                            icon: 'error'
+                        })
+                        return false;
+                    }
+                    if(!city.test(this.checkout.city)){
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'Enter a valid city',
+                            icon: 'error'
+                        })
+                        return false;
+                    }
+                    return true;
+                },
+
+
+                submitForm() {
+                    if (this.checkoutValidation()){
+
+                        if (this.checkout.name && this.checkout.number && this.checkout.email && this.checkout.address && this.checkout.city) {
+                            const orderData = {Name: this.checkout.name, Phone_Number: this.checkout.number, Email_Address: this.checkout.email, Address: this.checkout.address, City: this.checkout.city,
+                                Course_Id: this.cart.map(course => ({
+                                    id: course.id, bookedSpaces: course.bookedSpaces
+                                }))
+                            }
+
+                            fetch('http://localhost:8080/orders', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify(orderData)
+                            })
+                            .then(response => response.json())
+                            .then(() => {
+                                this.cart.forEach(course => {
+                                    const courseId = course.id
+                                    const bookedSpaces = Number(course.bookedSpaces)
+                                    const courseInDb = this.courses.find(item => item._id === courseId)
+                        
+
+                                    if(courseInDb && bookedSpaces > 0) {
+                                        console.log(`Sending request to update course: ${courseId}, bookedSpaces: ${bookedSpaces}`);
+                                        fetch(`http://localhost:8080/courses/${courseId}/spaces`, {
+                                            method: 'PUT',
+                                            headers: {
+                                                'Content-Type': 'application/json'
+                                            },
+                                            body: JSON.stringify({ spacesToReduce: bookedSpaces})
+                                        })
+                                        .then(response => {
+                                            if (!response.ok) {
+                                                throw new Error(`HTTP error! status: ${response.status}`);
+                                            }
+                                            return response.json()
+                                        })
+                                        .then(data => {console.log(`Spaces updated for course: ${course.subject}`, data);})
+                                        .catch(error => {console.error(`error updating spaces for course: ${course.subject}`, error)});
+                                    } 
+                                })
+
+                                this.checkout = {
+                                    name: '', number: ''
+                                }
+                                this.cart = []
+                                Swal.fire({
+                                    title: 'Success',
+                                    text: 'Order has been submitted',
+                                    icon: 'success'
+                                }).then(() => {
+                                    this.showSubject = true;
+                                })
+                            })
+                        }
+                    }
+                },
+
+                search() {
+                    if(this.query.trim().length === 0) {
+                        this.search_courses = []
+                        return;
+                    }
+
+                    const searchQuery = document.getElementById('searchInput').value;
+
+                    this.loading = true;
+                    fetch(`http://localhost:8080/search?query=${encodeURIComponent(searchQuery)}`)
+                        .then((response) => {
+                            if(!response.ok) {
+                                throw new Error("failed to fetch search results")
+                            }
+                            return response.json()
+                        })
+                        .then((data) => {
+                            this.search_courses = data
+                        })
+                        .catch((error) => {
+                            console.error("error fetching search results: ", error)
+                        })
+                        .finally(() => {
+                            this.loading = false;
+                        })
                 }
 
+                
 
             },
             created() {

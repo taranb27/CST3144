@@ -34,9 +34,9 @@ client.connect()
         async function courses_details(){
 
             // const result = await collection.drop()
-
+            const result = await collection.drop();
             const courseDetails = [
-                {Subject: "Maths", Location: "London", Price: "£100", Spaces: 10},
+                {img: "images/english.jpg" ,Subject: "Maths", Location: "London", Price: "£100", Spaces: 10},
                 {Subject: "English", Location: "Bristol", Price: "£80", Spaces: 10},
                 {Subject: "French", Location: "York", Price: "£90", Spaces: 10},
                 {Subject: "Science", Location: "London", Price: "£120", Spaces: 10},
@@ -141,7 +141,35 @@ client.connect()
         
             }
 
-        })
+        });
+
+        app.get('/search', async(req, res) => {
+            try {
+                console.log('Query parameter:', req.query.query);
+                const {query} = req.query;            
+
+                if (!query) {
+                    return res.status(400).json({ error: 'Search query is required' });
+                }
+
+                await client.connect();
+                const db = client.db("CST3144");
+                const coursesCollection = db.collection('course_details');       
+                
+                const results = await coursesCollection.find({
+                    $or: [
+                        {Subject: {$regex: query, $options: 'i'}},
+                        {Location: {$regex: query, $options: 'i'}},
+                        {Price: {$regex: query, $options: 'i'}},
+                        {Spaces: {$regex: query, $options: 'i'}}
+                    ]
+                }).toArray();
+                res.json(results);
+            } catch (error) {
+                console.error("Error fetching search results: ", error);
+                res.status(500).json({error: "internal server error"});
+            }
+        });
 
             
         app.use(express.json());
