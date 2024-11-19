@@ -39,16 +39,16 @@ client.connect()
         async function courses_details(){
 
             const courseDetails = [
-                {Subject: "Maths", Location: "London", Price: "£100", Spaces: 10, Image: "images/maths.jpeg"},
-                {Subject: "English", Location: "Bristol", Price: "£80", Spaces: 10, Image: "images/english.jpg"},
-                {Subject: "French", Location: "York", Price: "£90", Spaces: 10, Image: "images/french.jpg"},
-                {Subject: "Science", Location: "London", Price: "£120", Spaces: 10, Image: "images/science.avif"},
-                {Subject: "Maths", Location: "York", Price: "£100", Spaces: 10, Image: "images/maths.jpeg"},
-                {Subject: "Music", Location: "Bristol", Price: "£80", Spaces: 10, Image: "images/music.jpeg"},
-                {Subject: "English", Location: "London", Price: "£80", Spaces: 10, Image: "images/english.jpg"},
-                {Subject: "Maths", Location: "York", Price: "£1020", Spaces: 10, Image: "images/maths.jpeg"},
-                {Subject: "Science", Location: "Liverpool", Price: "£85", Spaces: 10, Image: "images/science.avif"},
-                {Subject: "French", Location: "Manchester", Price: "£86", Spaces: 10, Image: "images/french.jpg"}
+                {Subject: "Maths", Location: "London", Price: "£100", Spaces: 5, Image: "backend/images/maths.jpeg"},
+                {Subject: "English", Location: "Bristol", Price: "£80", Spaces: 5, Image: "backend/images/english.jpg"},
+                {Subject: "French", Location: "York", Price: "£90", Spaces: 5, Image: "backend/images/french.jpg"},
+                {Subject: "Science", Location: "London", Price: "£120", Spaces: 5, Image: "backend/images/science.avif"},
+                {Subject: "Maths", Location: "York", Price: "£100", Spaces: 5, Image: "backend/images/maths.jpeg"},
+                {Subject: "Music", Location: "Bristol", Price: "£80", Spaces: 5, Image: "backend/images/music.jpeg"},
+                {Subject: "English", Location: "London", Price: "£80", Spaces: 5, Image: "backend/images/english.jpg"},
+                {Subject: "Maths", Location: "York", Price: "£1020", Spaces: 5, Image: "backend/images/maths.jpeg"},
+                {Subject: "Science", Location: "Liverpool", Price: "£85", Spaces: 5, Image: "backend/images/science.avif"},
+                {Subject: "French", Location: "Manchester", Price: "£86", Spaces: 5, Image: "backend/images/french.jpg"}
             ];
 
             for (let course of courseDetails) {
@@ -166,7 +166,7 @@ client.connect()
                         {Subject: {$regex: query, $options: 'i'}},
                         {Location: {$regex: query, $options: 'i'}},
                         {Price: {$regex: query, $options: 'i'}},
-                        {Spaces: {$regex: query, $options: 'i'}}
+                        // {Spaces: {$regex: query, $options: 'i'}}
                     ]
                 }).toArray();
                 res.json(results);
