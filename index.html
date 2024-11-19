@@ -275,7 +275,7 @@
                                 }))
                             }
 
-                            fetch('/orders', {
+                            fetch('http://localhost:8080/orders', {
                                 method: 'POST',
                                 headers: {
                                     'Content-Type': 'application/json'
@@ -292,7 +292,7 @@
 
                                     if(courseInDb && bookedSpaces > 0) {
                                         console.log(`Sending request to update course: ${courseId}, bookedSpaces: ${bookedSpaces}`);
-                                        fetch(`/courses/${courseId}/spaces`, {
+                                        fetch(`http://localhost:8080/courses/${courseId}/spaces`, {
                                             method: 'PUT',
                                             headers: {
                                                 'Content-Type': 'application/json'
@@ -337,7 +337,7 @@
                     const searchQuery = document.getElementById('searchInput').value;
                     this.loading = true;
 
-                    fetch(`/search?query=${encodeURIComponent(searchQuery)}`)
+                    fetch(`http://localhost:8080/search?query=${encodeURIComponent(searchQuery)}`)
                         .then((response) => {
                             if(!response.ok) {
                                 throw new Error("failed to fetch search results")

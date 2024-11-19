@@ -3,14 +3,13 @@ const session = require("express-session")
 const path = require("path")
 const bodyParser = require("body-parser")
 const {MongoClient, ServerApiVersion, ObjectId} = require("mongodb");
+// const serverless = require("serverless-http");
 const app = express()
 app.use(bodyParser.json())
 
 const PORT = process.env.PORT || 8080;
 
 const server = "cluster0.2ior5mc.mongodb.net";
-
-
 
 const encodedusername = encodeURIComponent("tb848");
 const encodedpwd = encodeURIComponent("CST3144");
@@ -181,5 +180,6 @@ client.connect()
         app.use(express.json());
 
         app.listen(PORT, () => console.log('server running'));
+
     })
     .catch(err => console.error("error connecting to db", err));
