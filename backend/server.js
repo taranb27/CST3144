@@ -3,9 +3,11 @@ const session = require("express-session")
 const path = require("path")
 const bodyParser = require("body-parser")
 const {MongoClient, ServerApiVersion, ObjectId} = require("mongodb");
-// const serverless = require("serverless-http");
 const app = express()
+const morgan = require("morgan")
+
 app.use(bodyParser.json())
+app.use(morgan("dev"))
 
 const PORT = process.env.PORT || 8080;
 
@@ -24,12 +26,28 @@ const client = new MongoClient(URI, {
     }
 });
 
+// logger middleware
+app.use((req, res, next) => {
+    console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+    next();
+});
+
+// middleware to serve static files
+app.use(express.static(path.join(__dirname)));
+app.use('/images', express.static(path.join(__dirname, 'images')));
+
+// error handling for missing static files
+app.use('/images', (req, res) => {
+    res.status(404).json({error: 'image file not found'});
+});
+
+// middleware for parsing JSON and URL-encoded data
+app.use(express.json());
+app.use(express.urlencoded({extended: true}));
+
 client.connect()
     .then(() => {
         console.log("connected to db");
-
-        app.use(express.static(path.join(__dirname)));
-        app.use('/images', express.static(path.join(__dirname, 'images')))
 
         const database = client.db("CST3144");
         const collection = database.collection("course_details");
@@ -69,31 +87,28 @@ client.connect()
 
         courses_details();
 
-        
+        // home route
         app.get('/', (req, res) => {
-            res.sendFile(path.join(__dirname, 'index.html'));
+            res.sendFile(path.join(__dirname, '../frontend/index.html'));
         });
 
-                // Sends the course details from MongoDB to the frontend
-                app.get('/courses', async (req, res) => {
-                    try {
-                        // console.log("working")
-                        await client.connect();
-                        const db1 = client.db("CST3144");
-                        const coursesCollection = db1.collection("course_details");
-        
-                        const courses = await coursesCollection.find().toArray();
-                        // console.log(courses)
-                        res.json(courses)
-                        await client.close();
-                    } catch (err) {
-                        console.error("Failed", err);
-                        res.status(500).send("Error fetching courses");
-                    } finally {
-                        await client.close();
-                    }
-                });
-        
+        // Sends the course details from MongoDB to the frontend
+        app.get('/courses', async (req, res) => {
+            try {
+                await client.connect();
+                const db1 = client.db("CST3144");
+                const coursesCollection = db1.collection("course_details");
+                
+                const courses = await coursesCollection.find().toArray();
+                res.json(courses)
+                await client.close();
+            } catch (err) {
+                console.error("Failed", err);
+                res.status(500).send("Error fetching courses");
+            } finally {
+                await client.close();
+            }
+        });
 
         // POST method for order (after checkout)
         app.post('/orders', async(req, res) => {
@@ -176,8 +191,11 @@ client.connect()
             }
         });
 
-            
-        app.use(express.json());
+        // global error handling middleware
+        app.use((err, req, res, next) => {
+            console.error("error:", err.message);
+            res.status(500).json({error:"internal server error"});
+        }); 
 
         app.listen(PORT, () => console.log('server running'));
 
