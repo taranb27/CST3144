@@ -5,6 +5,8 @@ const bodyParser = require("body-parser");
 const {MongoClient, ServerApiVersion, ObjectId} = require("mongodb");
 const cors = require("cors");
 const morgan = require("morgan");
+const multer = require("multer");
+const { subscribe } = require("diagnostics_channel");
 
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -31,6 +33,17 @@ app.use(morgan("dev"));
 app.use(express.static(path.join(__dirname)));
 app.use('/images', express.static(path.join(__dirname, 'images')));
 app.use(cors());
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'images/');
+    },
+    filename: function(req, file, cb) {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, file.fieldname + '-', uniqueSuffix + path.extname(file.originalname));
+    }
+});
+const upload = multer({storage: storage});
 
 
 client.connect()
@@ -88,7 +101,10 @@ async function courses_details(){
 
 
 // Sends the course details from MongoDB to the frontend
-app.get('/courses', async (req, res) => {
+app.get('/courses', upload.single('image'), async (req, res) => {
+    const {Subject, Location, Price, Spaces} = req.body;
+    const image = req.file? `/images/${req.file.filename}` : null;
+    const course = {Subject, Location, Price, Spaces, Image: image};
     try {
         const coursesCollection = await database.collection("course_details").find().toArray();
         res.json(coursesCollection)
