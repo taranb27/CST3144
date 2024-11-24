@@ -46,6 +46,10 @@ client.connect()
 // The function added courses to the database, if the courses exists, nothing is added
 async function courses_details(){
     const collection = database.collection("course_details");
+    if (!collection) {
+        console.error("Collection 'course_details' is not found in the database");
+        return;
+    }
     const courseDetails = [
         {Subject: "Maths", Location: "London", Price: "£100", Spaces: 5, Image: "backend/images/maths.jpeg"},
         {Subject: "English", Location: "Bristol", Price: "£80", Spaces: 5, Image: "backend/images/english.jpg"},
