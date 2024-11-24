@@ -4,6 +4,7 @@ const path = require("path")
 const bodyParser = require("body-parser")
 const {MongoClient, ServerApiVersion, ObjectId} = require("mongodb");
 const app = express()
+const cors = require("cors")
 const morgan = require("morgan")
 
 app.use(bodyParser.json())
@@ -44,6 +45,8 @@ app.use('/images', (req, res) => {
 // middleware for parsing JSON and URL-encoded data
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
+
+app.use(cors());
 
 client.connect()
     .then(() => {
