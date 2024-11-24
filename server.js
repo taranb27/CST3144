@@ -36,6 +36,11 @@ client.connect()
     .then(() => {
         console.log("connected to mongodb");
         database=client.db("CST3144");
+
+        if (!database) {
+            console.error("Database is not initialized correctly");
+            return;
+        }
     })
     .catch(err => {
         console.error("error connecting to mongodb", err);
