@@ -58,16 +58,16 @@ async function courses_details(){
         return;
     }
     const courseDetails = [
-        {Subject: "Maths", Location: "London", Price: "£100", Spaces: 5, Image: "images/maths.jpeg"},
-        {Subject: "English", Location: "Bristol", Price: "£80", Spaces: 5, Image: "images/english.jpg"},
-        {Subject: "French", Location: "York", Price: "£90", Spaces: 5, Image: "images/french.jpg"},
-        {Subject: "Science", Location: "London", Price: "£120", Spaces: 5, Image: "images/science.avif"},
-        {Subject: "Maths", Location: "York", Price: "£100", Spaces: 5, Image: "images/maths.jpeg"},
-        {Subject: "Music", Location: "Bristol", Price: "£80", Spaces: 5, Image: "images/music.jpeg"},
-        {Subject: "English", Location: "London", Price: "£80", Spaces: 5, Image: "images/english.jpg"},
-        {Subject: "Maths", Location: "York", Price: "£1020", Spaces: 5, Image: "images/maths.jpeg"},
-        {Subject: "Science", Location: "Liverpool", Price: "£85", Spaces: 5, Image: "images/science.avif"},
-        {Subject: "French", Location: "Manchester", Price: "£86", Spaces: 5, Image: "images/french.jpg"}
+        {Subject: "Maths", Location: "London", Price: "£100", Spaces: 5},
+        {Subject: "English", Location: "Bristol", Price: "£80", Spaces: 5},
+        {Subject: "French", Location: "York", Price: "£90", Spaces: 5},
+        {Subject: "Science", Location: "London", Price: "£120", Spaces: 5},
+        {Subject: "Maths", Location: "York", Price: "£100", Spaces: 5},
+        {Subject: "Music", Location: "Bristol", Price: "£80", Spaces: 5},
+        {Subject: "English", Location: "London", Price: "£80", Spaces: 5},
+        {Subject: "Maths", Location: "York", Price: "£1020", Spaces: 5},
+        {Subject: "Science", Location: "Liverpool", Price: "£85", Spaces: 5},
+        {Subject: "French", Location: "Manchester", Price: "£86", Spaces: 5}
     ];
 
     for (let course of courseDetails) {
