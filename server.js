@@ -35,7 +35,7 @@ app.use(cors({origin: ["https://taranb27.github.io/frontend/"]}));
 client.connect()
     .then(() => {
         console.log("connected to mongodb");
-        database.client.db("CST3144");
+        database=client.db("CST3144");
     })
     .catch(err => {
         console.error("error connecting to mongodb", err);
@@ -72,7 +72,6 @@ async function courses_details(){
             console.log("courses already exists");
         }
     }
-    await client.close();
 }
 
 courses_details();
@@ -81,7 +80,7 @@ courses_details();
 app.get('/courses', async (req, res) => {
     try {
         const coursesCollection = await database.collection("course_details").find().toArray();
-        res.json(courses)
+        res.json(coursesCollection)
     } catch (err) {
         console.error("Failed", err);
         res.status(500).send("Error fetching courses");
