@@ -181,7 +181,6 @@ client.connect()
                         {Subject: {$regex: query, $options: 'i'}},
                         {Location: {$regex: query, $options: 'i'}},
                         {Price: {$regex: query, $options: 'i'}},
-                        // {Spaces: {$regex: query, $options: 'i'}}
                     ]
                 }).toArray();
                 res.json(results);
