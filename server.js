@@ -30,8 +30,9 @@ app.use(bodyParser.json());
 app.use(morgan("dev"));
 app.use(express.static(path.join(__dirname)));
 app.use('/images', express.static(path.join(__dirname, 'images')));
-app.use(cors({origin: ["https://taranb27.github.io/frontend/"]}));
-
+app.use(cors({
+    origin: "https://taranb27.github.io",
+}));
 
 client.connect()
     .then(() => {
