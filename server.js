@@ -113,10 +113,15 @@ app.post('/orders', async(req, res) => {
 app.put('/courses/:id', async (req, res) => {
     const courseId = req.params.id;
     const {course} = req.body;
+    console.log(`Updating spaces for course ID: ${courseId}, Spaces to reduce: ${spacesToReduce}`);
+
+        if (typeof spacesToReduce !== 'number' || spacesToReduce <= 0) {
+            return res.status(400).send('Invalid spaces to reduce');
+        }
 
     try {
         const result = await database.collection("course_details").updateOne(
-            {_id: new ObjectId(courseId)}, {$set: course}
+            {_id: new ObjectId(courseId)}, {course}
         );
         const updatedCourse = await database.collection("course_details").findOne({ _id: new ObjectId(courseId) });
         res.status(200).send(updatedCourse);
