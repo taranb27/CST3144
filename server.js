@@ -110,9 +110,9 @@ app.post('/orders', async(req, res) => {
 });
 
 // PUT method to update spaces for course bought
-app.put('/courses/:id/spaces', async (req, res) => {
+app.put('/courses/:id', async (req, res) => {
     const courseId = req.params.id;
-    const {spacesToReduce} = req.body;
+    const {course} = req.body;
     console.log(`Updating spaces for course ID: ${courseId}, Spaces to reduce: ${spacesToReduce}`);
 
         if (typeof spacesToReduce !== 'number' || spacesToReduce <= 0) {
@@ -121,8 +121,7 @@ app.put('/courses/:id/spaces', async (req, res) => {
 
     try {
         const result = await database.collection("course_details").updateOne(
-            {_id: new ObjectId(courseId)},
-            {$inc: {Spaces: -spacesToReduce}}
+            {_id: new ObjectId(courseId)}, {course}
         );
         const updatedCourse = await database.collection("course_details").findOne({ _id: new ObjectId(courseId) });
         res.status(200).send(updatedCourse);
