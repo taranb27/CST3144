@@ -116,7 +116,7 @@ app.put('/courses/:id', async (req, res) => {
 
     try {
         const result = await database.collection("course_details").updateOne(
-            {_id: new ObjectId(courseId)}, {course}
+            {_id: new ObjectId(courseId)}, {$set: course}
         );
         const updatedCourse = await database.collection("course_details").findOne({ _id: new ObjectId(courseId) });
         res.status(200).send(updatedCourse);
